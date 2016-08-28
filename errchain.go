@@ -15,7 +15,7 @@ func (e errslice) Error() string {
 		return e.errors[0].Error()
 	}
 	var buf bytes.Buffer
-	fmt.Fprintf(&buf, "%d errors: ")
+	fmt.Fprintf(&buf, "%d errors: ", len(e.errors))
 	for i, err := range e.errors {
 		if i > 0 {
 			buf.WriteString("; ")
