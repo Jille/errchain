@@ -59,3 +59,8 @@ func List(err error) []error {
 	}
 	return []error{err}
 }
+
+// Call runs cb and chains the error to err. To be used from defers.
+func Call(err *error, cb func() error) {
+	*err = Chain(*err, cb())
+}
