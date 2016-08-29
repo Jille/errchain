@@ -26,30 +26,30 @@ func (e errslice) Error() string {
 }
 
 // Chain takes two errors (or nils) and returns them combined if needed.
-func Chain(err1, err2 error) error {
-	if err1 == nil {
-		return err2
+func Chain(errs ...error) error {
+	var ret []error
+	for _, err := range errs {
+		if err == nil {
+			continue
+		} else if es, ok := err.(errslice); ok {
+			ret = append(ret, es.errors...)
+		} else {
+			ret = append(ret, err)
+		}
 	}
-	if err2 == nil {
-		return err1
+	switch len(ret) {
+	case 0:
+		return nil
+	case 1:
+		return ret[0]
+	default:
+		return errslice{ret}
 	}
-	var errs []error
-	if err, ok := err1.(errslice); ok {
-		errs = append(errs, err.errors...)
-	} else {
-		errs = append(errs, err1)
-	}
-	if err, ok := err2.(errslice); ok {
-		errs = append(errs, err.errors...)
-	} else {
-		errs = append(errs, err2)
-	}
-	return errslice{errs}
 }
 
-// Append changes err1 to be the combination of err1 and err2 (nils allowed).
-func Append(err1 *error, err2 error) {
-	*err1 = Chain(*err1, err2)
+// Append changes err1 to be the combination of err1 and all others (nils allowed).
+func Append(err1 *error, errs ...error) {
+	*err1 = Chain(*err1, Chain(errs...))
 }
 
 // List turns an error in a list of errors.
