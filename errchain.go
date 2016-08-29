@@ -54,6 +54,9 @@ func Append(err1 *error, err2 error) {
 
 // List turns an error in a list of errors.
 func List(err error) []error {
+	if err == nil {
+		return nil
+	}
 	if e, ok := err.(errslice); ok {
 		return e.errors
 	}
