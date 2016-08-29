@@ -25,7 +25,7 @@ func (e errslice) Error() string {
 	return buf.String()
 }
 
-// Chain takes two errors (or nils) and returns them combined if needed.
+// Chain takes errors (or nils) and returns them combined if multiple errors are not nil.
 func Chain(errs ...error) error {
 	var ret []error
 	for _, err := range errs {
